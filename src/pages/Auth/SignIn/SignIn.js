@@ -3,21 +3,11 @@ import React, { Component } from 'react';
 import Input from '../../../components/UI/Input/Input';
 import Button from '../../../components/UI/Button/Button';
 import { updateObject } from '../../../shared/util'
-import styles from './Signup.module.scss';
+import styles from './SignIn.module.scss';
 
-class SignUp extends Component {
+class SignIn extends Component {
   state= {
-    signUpForm: {
-      name: {
-        elementType: 'input',
-        elementConfig: {
-          type: 'text',
-          placeholder: 'Your Name',
-          name: 'name',
-        },
-        label: 'Name',
-        value: ''
-      },
+    signInForm: {
       email: {
         elementType: 'input',
         elementConfig: {
@@ -38,48 +28,38 @@ class SignUp extends Component {
         label: 'Password',
         value: ''
       },
-      confirmPassword: {
-        elementType: 'input',
-        elementConfig: {
-          type: 'password',
-          placeholder: 'Confirm Password',
-          name: 'confirmPassword'
-        },
-        label: 'Confirm Password',
-        value: ''
-      }
     }
   }
 
   inputChangeHandler = (event, inputId) => {
-    const updatedInputElement = updateObject(this.state.signUpForm[inputId], {
+    const updatedInputElement = updateObject(this.state.signInForm[inputId], {
       value: event.target.value
     })
-    const updatedSignUpForm = updateObject(this.state.signUpForm, {
+    const updatedSignInForm = updateObject(this.state.signInForm, {
       [inputId]: updatedInputElement
     });
 
-    this.setState({signUpForm: updatedSignUpForm});
+    this.setState({signInForm: updatedSignInForm});
   }
 
 
   render() {
     const formElements = [];
-    for (let key in this.state.signUpForm) {
+    for (let key in this.state.signInForm) {
       formElements.push({
         id: key,
-        config: this.state.signUpForm[key]
+        config: this.state.signInForm[key]
       })
     }
     const formData = {};
-    for(let inputId in this.state.signUpForm) {
-      formData[inputId] = this.state.signUpForm[inputId].value
+    for(let inputId in this.state.signInForm) {
+      formData[inputId] = this.state.signInForm[inputId].value
     }
 
     return (
       <form 
-        onSubmit={event => this.props.onSignUp(event, formData)}
-        className={styles.SignUpForm}>
+        onSubmit={event => this.props.onLogin(event, formData)}
+        className={styles.SignInForm}>
         {formElements.map(input => (
           <Input
             key={input.id}
@@ -91,13 +71,10 @@ class SignUp extends Component {
             />
         ))}
         <Button
-          design='FormButton'>Sign Up</Button>
-        <p>Got an account? Switch to Sign In!</p>
-        <Button
-          design='FormButton'>Switch to Sign In</Button>
+          design='FormButton'>Sign In</Button>
       </form>
     )
   }
 }
 
-export default SignUp
+export default SignIn;
