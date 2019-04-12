@@ -21,9 +21,9 @@ const Input = props => {
   }
 
   return (
-    <div className={styles.Input}>
+    <div className={[styles.Input, styles[props.design]].join(' ')}>
       <label
-        className = {styles.Label} 
+        className={styles.Label} 
         htmlFor={props.elementConfig.name}>{props.label}</label>
       {inputElement}
     </div>

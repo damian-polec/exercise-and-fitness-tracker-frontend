@@ -9,6 +9,7 @@ import './App.scss';
 
 class App extends Component {
   state = {
+
     isAuth: false,
     token: null,
     userId: null
@@ -40,7 +41,7 @@ class App extends Component {
       this.setState({isAuth: false});
       this.props.history.replace('/');
     }).catch(err => console.log(err));
-  }
+  };
 
   onLoginHandler = (event, formData) => {
     event.preventDefault();
@@ -61,7 +62,7 @@ class App extends Component {
       localStorage.setItem('token', json.token);
       localStorage.setItem('userId', json.userId);
     }).catch(err => console.log(err));
-  }
+  };
 
   render() {
     let routes = (
@@ -100,6 +101,7 @@ class App extends Component {
             exact
             render={props => (
               <ExerciseTracker
+                noteHandler={this.onNoteHandler}
                 {...props}
               />
             )} 

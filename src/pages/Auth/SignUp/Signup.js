@@ -83,6 +83,7 @@ class SignUp extends Component {
         {formElements.map(input => (
           <Input
             key={input.id}
+            design='Sign_Form'
             change={(event) => this.inputChangeHandler(event, input.id)}
             label={input.config.label} 
             elementType={input.config.elementType}

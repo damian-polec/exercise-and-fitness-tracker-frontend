@@ -1,7 +1,6 @@
 .Input {
   display: flex;
   flex-direction: column;
-  width: 80%;
   .Label {
     text-transform: uppercase;
     font-weight: 700;
@@ -21,4 +20,12 @@
       border: 4px solid #B33C69;
     }
   }
+}
+
+.Sign_Form {
+  width: 80%;
+}
+
+.Note_Form {
+  width: 50%;
 }

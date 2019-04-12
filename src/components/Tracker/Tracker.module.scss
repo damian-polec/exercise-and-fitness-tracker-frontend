@@ -1,9 +1,37 @@
+@import '../../sass/vars.sass';
+
+
 .Tracker {
   width: 75%;
+  margin: 1rem;
   h1 {
     text-align: center;
     margin: 0;
     font-size: 3rem;
     transform: skew(-25deg)
+  }
+  .CalendarWrapper {
+    display: flex;
+    flex-wrap: wrap;
+    div {
+      &:nth-child(1) {
+        border-left: $calendarBorder;
+      }
+      &:nth-child(8) {
+        border-left: $calendarBorder;
+      }
+      &:nth-child(15) {
+        border-left: $calendarBorder;
+      }
+      &:nth-child(22) {
+        border-left: $calendarBorder;
+      }
+      &:nth-child(29) {
+        border-left: $calendarBorder;
+      }
+      &:nth-child(36) {
+        border-left: $calendarBorder;
+      }
+    }
   }
 }
