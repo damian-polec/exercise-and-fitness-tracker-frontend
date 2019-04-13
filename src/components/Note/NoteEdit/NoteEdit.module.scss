@@ -2,4 +2,11 @@
   display: flex;
   align-items: center;
   flex-direction: column;
+  .Form_Control {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 100%;
+    flex-direction: row-reverse;
+  }
 }

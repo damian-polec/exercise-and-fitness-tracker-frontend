@@ -7,4 +7,13 @@
       font-weight: bold;
     }
   }
+  .Exercise_Info {
+    display: flex;
+    font-size: 2rem;
+    align-items: center;
+    justify-content: center;
+    p {
+      margin: 0 1rem;
+    }
+  }
 }

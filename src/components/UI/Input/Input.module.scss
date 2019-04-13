@@ -20,6 +20,17 @@
       border: 4px solid #B33C69;
     }
   }
+  .Select_Element {
+    height: 3rem;
+    font-size: 1.5rem;
+    border: 2px solid #B33C69;
+    border-radius: 5px;
+    outline: none;
+    &:focus,
+    &:active {
+      border: 4px solid #B33C69;
+    }
+  }
 }
 
 .Sign_Form {
@@ -28,4 +39,5 @@
 
 .Note_Form {
   width: 50%;
+  margin: 0 1rem;
 }

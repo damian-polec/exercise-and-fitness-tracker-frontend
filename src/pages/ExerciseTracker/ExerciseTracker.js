@@ -16,7 +16,8 @@ class ExerciseTracker extends Component {
     note: null,
     editNote: false,
     calendarData: [],
-    isLoading: true
+    isLoading: true,
+    noteData: []
   }
   componentDidMount() {
     this.getCalendar()
@@ -38,22 +39,77 @@ class ExerciseTracker extends Component {
   }
 
   onNoteHandler = noteData => {
-    this.setState({
-      note: noteData,
-      editNote: true, 
-      showBackdrop: true 
+    const noteId = noteData._id;
+    fetch(`http://localhost:8080/tracker/getNoteData/${noteId}`, {
+      method: 'GET',
     })
+    .then(res => {
+      return res.json();
+    })
+    .then(resData => {
+      this.setState({
+        note: noteData,
+        noteData: resData.data.exercises,
+        editNote: true, 
+        showBackdrop: true
+      })
+      console.log(resData);
+    })
+    .catch(err => console.log(err));
   }
 
   backdropClickHandler = () => {
     this.setState({
       note: null, 
       editNote: false,
-      showBackdrop: false
+      showBackdrop: false,
+      noteData: []
      })
   };
+  
+  addExercisekHandler = (event, exerciseType, time) => {
+    event.preventDefault();
+    let passedTime = time;
+    if(!passedTime) {
+      return;
+    }
+    if(!/:/.test(passedTime)) {
+      passedTime = `${passedTime}:00`
+    }
+    const exercise = {
+      exerciseType: exerciseType,
+      time: passedTime
+    }
+    this.setState(prevState => {
+      return {noteData: prevState.noteData.concat(exercise)}
+    })
+  }
 
-
+  onSaveNoteHandler = (event) => {
+    event.preventDefault();
+    console.log(this.state.noteData);
+    const bodyData = {
+      noteData: this.state.noteData,
+      dayId: this.state.note._id
+    }
+    fetch('http://localhost:8080/tracker/addNote', {
+      method: 'POST',
+      headers: {
+        'Content-Type' : 'application/json'
+      },
+      body: JSON.stringify(bodyData)
+    }).then(res => {
+      return res.json();
+    }).then(res => {
+      this.setState({
+        showBackdrop: false,
+        editNote: false,
+        note: null,
+        noteData: []
+      })
+      console.log(res);
+    }).catch(err => console.log(err))
+  }
 
   render() {
     let days = null;
@@ -88,9 +144,12 @@ class ExerciseTracker extends Component {
           <Modal
             title={`${this.state.note.day}/${this.state.note.month + 1}/${this.state.note.year}`}>
             <NoteView
-              time={this.state.note.time || '00:00'} 
+              time={this.state.note.time || '00:00'}
+              exercises={this.state.noteData} 
             />
-            <NoteEdit />
+            <NoteEdit 
+              onClick={this.addExercisekHandler}
+              onSubmit={this.onSaveNoteHandler}/>
           </Modal>
         )}
         <div className={styles.ExerciseTracker}>

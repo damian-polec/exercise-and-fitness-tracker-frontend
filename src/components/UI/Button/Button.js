@@ -5,7 +5,8 @@ import styles from './Button.module.scss'
 const Button = props => (
   <button
     className={styles[props.design]}
-    disabled={props.disabled}>{props.children}</button>
+    disabled={props.disabled}
+    onClick={props.onClick}>{props.children}</button>
 )
 
 export default Button;

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 
 import Input from '../../UI/Input/Input';
 import Button from '../../UI/Button/Button';
@@ -13,11 +13,22 @@ class NoteEdit extends Component {
         elementType: 'input',
         elementConfig: {
           type: 'text',
-          placeholder: '',
+          placeholder: 'Your Time(15:00)',
           name: 'time',
         },
         label: 'Time',
         value: ''
+      },
+      exerciseType: {
+        elementType: 'select',
+        elementConfig: {
+          options: [
+            {value: 'running', displayValue: 'Running'},
+            {value: 'swimming', displayValue: 'Swimming'}
+          ]
+        },
+        label: 'Exercise Type',
+        value: 'running',
       }
     }
   }
@@ -34,20 +45,40 @@ class NoteEdit extends Component {
   }
 
   render() {
-    const inputId = Object.keys(this.state.exerciseForm)[0];
-    return (
-      <form className={styles.Note_Edit}>
-        <Input
-          design='Note_Form'
-          change={(event) => this.inputChangeHandler(event, inputId)}
-          label={this.state.exerciseForm.time.label} 
-          elementType={this.state.exerciseForm.time.elementType}
-          elementConfig={this.state.exerciseForm.time.elementConfig}
-          value={this.state.exerciseForm.time.value} 
-        />
+    const formElementsArray = [];
+    for (let key in this.state.exerciseForm) {
+        formElementsArray.push({
+            id: key,
+            config: this.state.exerciseForm[key]
+        });
+    }
+    let form = (
+      <form
+        onSubmit={(event) => this.props.onSubmit(event)} 
+        className={styles.Note_Edit}>
+        <div className={styles.Form_Control}>
+          <Button 
+            design='Note_Button'
+            onClick={(event) => this.props.onClick(event, this.state.exerciseForm.exerciseType.value, this.state.exerciseForm.time.value)}>+</Button>
+          {formElementsArray.map(formElement => (
+            <Input
+              key={formElement.id}
+              design='Note_Form'
+              change={(event) => this.inputChangeHandler(event, formElement.id)}              
+              elementType={formElement.config.elementType}
+              elementConfig={formElement.config.elementConfig}
+              value={formElement.config.value} 
+            />
+          ))}
+        </div>
         <Button
           design='Note_Button'>Submit</Button>
       </form>
+    )
+    return (
+      <Fragment>
+        {form}
+      </Fragment>
     )
   }
 } 
