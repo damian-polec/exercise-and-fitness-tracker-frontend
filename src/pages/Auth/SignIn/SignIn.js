@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 
 import Input from '../../../components/UI/Input/Input';
 import Button from '../../../components/UI/Button/Button';
-import { updateObject } from '../../../shared/util'
+import Spinner from '../../../components/UI/Spinner/Spinner';
+import { updateObject, checkValidity } from '../../../shared/util'
 import styles from './SignIn.module.scss';
 
 class SignIn extends Component {
@@ -16,7 +17,13 @@ class SignIn extends Component {
           name: 'email'
         },
         label: 'Email',
-        value: ''
+        value: '',
+        validation: {
+          required: true,
+          isEmail: true
+        },
+        valid: false,
+        touched: false
       },
       password: {
         elementType: 'input',
@@ -26,20 +33,39 @@ class SignIn extends Component {
           name: 'password'
         },
         label: 'Password',
-        value: ''
-      },
-    }
+        value: '',
+        validation: {
+          required: true,
+          isPassword: true,
+          minLength: 6
+        },
+        valid: false,
+        touched: false
+      }
+    },
+    formIsValid: false,
+    isLoading: false
   }
 
   inputChangeHandler = (event, inputId) => {
     const updatedInputElement = updateObject(this.state.signInForm[inputId], {
-      value: event.target.value
+      value: event.target.value,
+      valid: checkValidity(event.target.value, this.state.signInForm[inputId].validation),
+      touched: true
     })
     const updatedSignInForm = updateObject(this.state.signInForm, {
       [inputId]: updatedInputElement
     });
 
-    this.setState({signInForm: updatedSignInForm});
+    let formIsValid = true;
+    for(let input in updatedSignInForm ) {
+      formIsValid = updatedSignInForm[input].valid && formIsValid;
+    }
+
+    this.setState({
+      signInForm: updatedSignInForm,
+      formIsValid: formIsValid
+    });
   }
 
 
@@ -69,10 +95,14 @@ class SignIn extends Component {
             elementType={input.config.elementType}
             elementConfig={input.config.elementConfig}
             value={input.config.value}
+            invalid={!input.config.valid}
+            validationType={input.config.validation}
+            isTouched={input.config.touched}
             />
         ))}
         <Button
-          design='FormButton'>Sign In</Button>
+          disabled={!this.state.formIsValid || this.props.isLoading}
+          design='FormButton'>Login {this.props.isLoading ? <Spinner design='Loader_Button'/> : null}</Button>
       </form>
     )
   }

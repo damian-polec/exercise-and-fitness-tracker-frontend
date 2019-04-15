@@ -1,9 +1,15 @@
 import React from 'react';
 
+import Spinner from '../UI/Spinner/Spinner';
 import CalendarHeader from './CalendarHeader/CalendarHeader';
 
 import styles from './Tracker.module.scss'
 const Tracker = props => {
+  const spinner = (
+    <div className={styles.Spinner_Wrapper}>
+      <Spinner design='Loader_Content'/>
+    </div>
+  )
   return (
     <div className={styles.Tracker}>
       <h1>Exercise & Fitness Tracker</h1>
@@ -17,6 +23,7 @@ const Tracker = props => {
         <CalendarHeader text='Saturday' />       
         {props.children}
       </div>
+      {props.isLoading ? spinner : null}
     </div>
   )
 }

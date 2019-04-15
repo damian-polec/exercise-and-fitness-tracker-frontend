@@ -9,5 +9,11 @@
   border-right: $calendarBorder;
   border-bottom: $calendarBorder;
   font-size: 1.5rem;
+  transition: .2s;
+  &:hover {
+    background: #D28BA4;
+    font-weight: bold;
+    cursor: pointer;
+  }
 }
 

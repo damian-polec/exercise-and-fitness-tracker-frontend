@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 
 import Input from '../../../components/UI/Input/Input';
 import Button from '../../../components/UI/Button/Button';
-import { updateObject } from '../../../shared/util'
+import Spinner from '../../../components/UI/Spinner/Spinner';
+import { updateObject, checkValidity } from '../../../shared/util'
 import styles from './Signup.module.scss';
 
 class SignUp extends Component {
@@ -16,7 +17,12 @@ class SignUp extends Component {
           name: 'name',
         },
         label: 'Name',
-        value: ''
+        value: '',
+        validation: {
+          required: true
+        },
+        valid: false,
+        touched: false
       },
       email: {
         elementType: 'input',
@@ -26,7 +32,13 @@ class SignUp extends Component {
           name: 'email'
         },
         label: 'Email',
-        value: ''
+        value: '',
+        validation: {
+          required: true,
+          isEmail: true
+        },
+        valid: false,
+        touched: false
       },
       password: {
         elementType: 'input',
@@ -36,7 +48,14 @@ class SignUp extends Component {
           name: 'password'
         },
         label: 'Password',
-        value: ''
+        value: '',
+        validation: {
+          required: true,
+          isPassword: true,
+          minLength: 6
+        },
+        valid: false,
+        touched: false
       },
       confirmPassword: {
         elementType: 'input',
@@ -46,20 +65,44 @@ class SignUp extends Component {
           name: 'confirmPassword'
         },
         label: 'Confirm Password',
-        value: ''
+        value: '',
+        validation: {
+          required: true,
+          isEqual: true,
+        },
+        valid: false,
+        touched: false
       }
-    }
+    },
+    isLoading: false,
+    formIsValid: false
   }
 
   inputChangeHandler = (event, inputId) => {
+    let isPass = null;
+    if(inputId === 'confirmPassword') {
+      isPass = this.state.signUpForm.password.value;
+    }
     const updatedInputElement = updateObject(this.state.signUpForm[inputId], {
-      value: event.target.value
+      value: event.target.value,
+      valid: checkValidity(event.target.value, this.state.signUpForm[inputId].validation, isPass),
+      touched: true
     })
     const updatedSignUpForm = updateObject(this.state.signUpForm, {
       [inputId]: updatedInputElement
     });
+    let formIsValid = true;
+    for(let input in updatedSignUpForm ) {
+      formIsValid = updatedSignUpForm[input].valid && formIsValid;
+    }
+    this.setState({
+      signUpForm: updatedSignUpForm,
+      formIsValid: formIsValid
+    });
+  }
 
-    this.setState({signUpForm: updatedSignUpForm});
+  onTransfer = () => {
+    this.props.history.replace('/login');
   }
 
 
@@ -89,13 +132,19 @@ class SignUp extends Component {
             elementType={input.config.elementType}
             elementConfig={input.config.elementConfig}
             value={input.config.value}
+            invalid={!input.config.valid}
+            validationType={input.config.validation}
+            isTouched={input.config.touched}
             />
         ))}
         <Button
-          design='FormButton'>Sign Up</Button>
-        <p>Got an account? Switch to Sign In!</p>
-        <Button
-          design='FormButton'>Switch to Sign In</Button>
+          design='FormButton'
+          disabled={!this.state.formIsValid || this.props.isLoading}>Sign Up {this.props.isLoading ? <Spinner design='Loader_Button'/> : null}</Button>
+        <p>Got an account? Switch to  
+          <span
+            onClick={this.onTransfer} 
+            className={styles.SignIn_Transfer_Link}> Sign In!</span>
+        </p>
       </form>
     )
   }

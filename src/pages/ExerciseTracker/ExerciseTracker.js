@@ -7,6 +7,10 @@ import Modal from '../../components/Modal/Modal';
 import NoteView from '../../components/Note/NoteView/NoteView';
 import NoteEdit from '../../components/Note/NoteEdit/NoteEdit';
 import CalendarSquare from '../../components/Tracker/CalendarSquare/CalendarSquare';
+import ErrorHandler from '../../components/ErrorHandler/ErrorHandler';
+
+
+import { convertToSeconds, convertTime } from '../../shared/util'
 
 import styles from './ExerciseTracker.module.scss';
 
@@ -15,47 +19,67 @@ class ExerciseTracker extends Component {
     showBackdrop: false,
     note: null,
     editNote: false,
-    calendarData: [],
-    isLoading: true,
-    noteData: []
+    calendarData: null,
+    isLoading: false,
+    noteData: [],
+    error: null
   }
   componentDidMount() {
-    this.getCalendar()
+    this.getCalendar();
   }
 
   getCalendar = () => {
-    const userId = localStorage.getItem('userId');
+    this.setState({isLoading: true})
+    const token = localStorage.getItem('token');
     fetch('http://localhost:8080/tracker/getData', {
-      method: 'POST',
+      method: 'GET',
       headers: {
-        'Content-Type' : 'application/json'
-      },
-      body: JSON.stringify({userId: userId})
+        'Content-Type' : 'application/json',
+        'Authorization' : `Bearer ${token}`
+      }
     }).then(res => {
       return res.json()
     }).then(resData => {
+      if(resData.errors) {
+        throw new Error(
+          'Not Authenticated'
+        )
+      }
       this.setState({ calendarData: resData.data, isLoading: false})
-    }).catch(err => console.log(err));
+    }).catch(err => {
+        this.setState({error: err})
+    });
   }
 
   onNoteHandler = noteData => {
+    const token = localStorage.getItem('token')
     const noteId = noteData._id;
     fetch(`http://localhost:8080/tracker/getNoteData/${noteId}`, {
       method: 'GET',
+      headers: {
+        'Authorization' : `Bearer ${token}`
+      }
     })
     .then(res => {
       return res.json();
     })
     .then(resData => {
+      console.log(resData);
+      if(resData.errors) {
+        throw new Error (
+          'Not Authenticated'
+        )
+      }
       this.setState({
         note: noteData,
         noteData: resData.data.exercises,
         editNote: true, 
         showBackdrop: true
       })
-      console.log(resData);
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+      this.setState({error: err})
+    });
   }
 
   backdropClickHandler = () => {
@@ -76,18 +100,30 @@ class ExerciseTracker extends Component {
     if(!/:/.test(passedTime)) {
       passedTime = `${passedTime}:00`
     }
-    const exercise = {
-      exerciseType: exerciseType,
-      time: passedTime
+    const exerciseIndex = this.state.noteData.findIndex((note => {
+      return note.exerciseType === exerciseType
+    }))
+    if(exerciseIndex < 0) {
+      const exercise = {
+        exerciseType: exerciseType,
+        time: passedTime
+      }
+      this.setState(prevState => {
+        return {noteData: prevState.noteData.concat(exercise)}
+      })
+    } else {
+      const prevTime = convertToSeconds(this.state.noteData[exerciseIndex].time);
+      const newTime = convertTime(convertToSeconds(passedTime) + prevTime);
+      const noteCopy = this.state.noteData.slice();
+      noteCopy[exerciseIndex].time = newTime
+      this.setState({noteData: noteCopy});
     }
-    this.setState(prevState => {
-      return {noteData: prevState.noteData.concat(exercise)}
-    })
+    
   }
 
   onSaveNoteHandler = (event) => {
     event.preventDefault();
-    console.log(this.state.noteData);
+    const token = localStorage.getItem('token');
     const bodyData = {
       noteData: this.state.noteData,
       dayId: this.state.note._id
@@ -95,25 +131,43 @@ class ExerciseTracker extends Component {
     fetch('http://localhost:8080/tracker/addNote', {
       method: 'POST',
       headers: {
-        'Content-Type' : 'application/json'
+        'Content-Type' : 'application/json',
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify(bodyData)
     }).then(res => {
       return res.json();
     }).then(res => {
+      if(res.errors) {
+        throw new Error(
+          'Not Authenticated'
+        )
+      }
       this.setState({
         showBackdrop: false,
         editNote: false,
         note: null,
         noteData: []
       })
-      console.log(res);
-    }).catch(err => console.log(err))
+    }).catch(err => {
+      this.setState({error: err});
+    })
+  }
+
+  errorHandler = () => {
+    if(this.state.error.message === 'Not Authenticated') {
+      this.setState({error: null});
+      this.props.logoutHandler();
+    }
+    if(this.state.error) {
+      this.setState({error: null})
+    }
   }
 
   render() {
     let days = null;
-    if(!this.state.isLoading) {
+
+    if(!this.state.isLoading && this.state.calendarData) {
       const month = this.state.calendarData[0].month;
       const year = this.state.calendarData[0].year;
       const lastDayOfPassedMonth = new Date(year, month, 0).getDay();
@@ -140,11 +194,13 @@ class ExerciseTracker extends Component {
         {this.state.showBackdrop && (
           <Backdrop onClick={this.backdropClickHandler} />
         )}
+        <ErrorHandler
+          error={this.state.error}
+          onHandle={this.errorHandler} />
         {this.state.editNote && (
           <Modal
             title={`${this.state.note.day}/${this.state.note.month + 1}/${this.state.note.year}`}>
             <NoteView
-              time={this.state.note.time || '00:00'}
               exercises={this.state.noteData} 
             />
             <NoteEdit 
@@ -154,7 +210,8 @@ class ExerciseTracker extends Component {
         )}
         <div className={styles.ExerciseTracker}>
           <SideBar />
-          <Tracker>
+          <Tracker
+            isLoading={this.state.isLoading}>
             {days}
           </Tracker>
         </div>

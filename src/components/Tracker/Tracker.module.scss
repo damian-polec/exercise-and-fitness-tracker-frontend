@@ -10,6 +10,13 @@
     font-size: 3rem;
     transform: skew(-25deg)
   }
+  .Spinner_Wrapper {
+    width: 100%;
+    margin: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
   .CalendarWrapper {
     display: flex;
     flex-wrap: wrap;

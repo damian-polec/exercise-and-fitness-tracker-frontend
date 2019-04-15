@@ -58,7 +58,7 @@ class NoteEdit extends Component {
         className={styles.Note_Edit}>
         <div className={styles.Form_Control}>
           <Button 
-            design='Note_Button'
+            design='Add_Button'
             onClick={(event) => this.props.onClick(event, this.state.exerciseForm.exerciseType.value, this.state.exerciseForm.time.value)}>+</Button>
           {formElementsArray.map(formElement => (
             <Input

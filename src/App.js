@@ -4,15 +4,17 @@ import { Route, Switch, Redirect, withRouter } from 'react-router-dom';
 import Auth from './pages/Auth/Auth';
 import SignUp from './pages/Auth/SignUp/SignUp';
 import SignIn from './pages/Auth/SignIn/SignIn';
+import ErrorHandler from './components/ErrorHandler/ErrorHandler';
 import ExerciseTracker from './pages/ExerciseTracker/ExerciseTracker';
 import './App.scss';
 
 class App extends Component {
   state = {
-
+    error: null,
     isAuth: false,
     token: null,
-    userId: null
+    userId: null,
+    authLoading: false
   }
 
   componentDidMount() {
@@ -26,6 +28,7 @@ class App extends Component {
 
   onSignUpHandler = (event, formData) => {
     event.preventDefault();
+    this.setState({ authLoading: true })
     fetch('http://localhost:8080/auth/signup', {
       method: 'POST',
       headers: {
@@ -38,13 +41,23 @@ class App extends Component {
       if(json.errors) {
         throw new Error('User creation failed');
       }
-      this.setState({isAuth: false});
-      this.props.history.replace('/');
-    }).catch(err => console.log(err));
+      this.setState({
+        isAuth: false,
+        authLoading: false
+      });
+      this.props.history.replace('/login');
+    }).catch(err =>{
+      this.setState({
+        authLoading: false,
+        isAuth: false,
+        error: err
+      })
+    });
   };
 
   onLoginHandler = (event, formData) => {
     event.preventDefault();
+    this.setState({ authLoading: true })
     fetch('http://localhost:8080/auth/signin', {
       method: 'POST',
       headers: {
@@ -54,15 +67,43 @@ class App extends Component {
     }).then(res => {
       return res.json()
     }).then(json => {
+      console.log(json);
+      if(json.errors && json.errors.statusCode === 422) {
+        throw new Error(
+          'Validation Failed. User doesn\'t exist'
+        );
+      }
+      if(json.errors && json.errors.statusCode === 401) {
+        throw new Error(
+          'Incorrect password'
+        )
+      }
+      localStorage.setItem('token', json.token);
+      localStorage.setItem('userId', json.userId);
       this.setState({
+        authLoading: false,
         isAuth: true,
         token: json.token,
         userId: json.userId
       });
-      localStorage.setItem('token', json.token);
-      localStorage.setItem('userId', json.userId);
-    }).catch(err => console.log(err));
+    }).catch(err => {
+      this.setState({
+        authLoading: false,
+        isAuth: false,
+        error: err
+      })
+    });
   };
+
+  onLogoutHandler = () => {
+    this.setState({ isAuth: false, token: null, userId: null})
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+  }
+
+  errorHandler = () => {
+    this.setState({ error: null})
+  }
 
   render() {
     let routes = (
@@ -72,19 +113,21 @@ class App extends Component {
             path='/'
             exact
             render={props => (
-              <SignIn 
+              <SignUp 
                 {...props}
-                onLogin={this.onLoginHandler}
+                isLoading={this.state.authLoading}
+                onSignUp={this.onSignUpHandler} 
               />
             )}
           />
           <Route
-            path='/signup'
+            path='/login'
             exact
             render={props => (
-              <SignUp
+              <SignIn
                 {...props}
-                onSignUp={this.onSignUpHandler} 
+                isLoading={this.state.authLoading}
+                onLogin={this.onLoginHandler} 
               /> 
             )} 
           />
@@ -102,6 +145,7 @@ class App extends Component {
             render={props => (
               <ExerciseTracker
                 noteHandler={this.onNoteHandler}
+                logoutHandler={this.onLogoutHandler}
                 {...props}
               />
             )} 
@@ -113,6 +157,9 @@ class App extends Component {
 
     return (
       <div className="App">
+        <ErrorHandler
+          error={this.state.error}
+          onHandle={this.errorHandler} />
         {routes}
       </div>
     );
