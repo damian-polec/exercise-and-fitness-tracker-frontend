@@ -5,7 +5,6 @@ import { convertToSeconds, convertTime } from '../../../shared/util';
 import styles from './NoteView.module.scss';
 
 const NoteView = props => {
-  console.log(props.exercises);
   const exercises = props.exercises.map((exercise, i) => (
     <div
       className={styles.Exercise_Info} 

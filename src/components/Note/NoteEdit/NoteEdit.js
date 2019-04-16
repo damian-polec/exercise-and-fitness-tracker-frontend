@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 
 import Input from '../../UI/Input/Input';
 import Button from '../../UI/Button/Button';
-import { updateObject } from '../../../shared/util';
+import { updateObject, checkValidity } from '../../../shared/util';
 
 import styles from './NoteEdit.module.scss';
 
@@ -13,11 +13,17 @@ class NoteEdit extends Component {
         elementType: 'input',
         elementConfig: {
           type: 'text',
-          placeholder: 'Your Time(15:00)',
+          placeholder: 'Your Time(i.e 15:00)',
           name: 'time',
         },
         label: 'Time',
-        value: ''
+        value: '',
+        validation: {
+          required: true,
+          isTime: true
+        },
+        valid: false,
+        touched: false
       },
       exerciseType: {
         elementType: 'select',
@@ -29,19 +35,30 @@ class NoteEdit extends Component {
         },
         label: 'Exercise Type',
         value: 'running',
+        valid: true
       }
-    }
+    },
+    isValid: false
   }
 
   inputChangeHandler = (event, inputId) => {
     const updatedInputElement = updateObject(this.state.exerciseForm[inputId], {
-      value: event.target.value
+      value: event.target.value,
+      valid: checkValidity(event.target.value, this.state.exerciseForm[inputId].validation),
+      touched: true
     })
     const updatedExerciseForm = updateObject(this.state.exerciseForm, {
       [inputId]: updatedInputElement
     });
+    let formIsValid = true;
+    for(let input in updatedExerciseForm ) {
+      formIsValid = updatedExerciseForm[input].valid && formIsValid;
+    }
 
-    this.setState({exerciseForm: updatedExerciseForm});
+    this.setState({
+      exerciseForm: updatedExerciseForm,
+      isValid: formIsValid
+    });
   }
 
   render() {
@@ -59,6 +76,7 @@ class NoteEdit extends Component {
         <div className={styles.Form_Control}>
           <Button 
             design='Add_Button'
+            disabled={!this.state.isValid}
             onClick={(event) => this.props.onClick(event, this.state.exerciseForm.exerciseType.value, this.state.exerciseForm.time.value)}>+</Button>
           {formElementsArray.map(formElement => (
             <Input
@@ -68,11 +86,13 @@ class NoteEdit extends Component {
               elementType={formElement.config.elementType}
               elementConfig={formElement.config.elementConfig}
               value={formElement.config.value} 
+              invalid={!formElement.config.valid}
+              validationType={formElement.config.validation}
+              isTouched={formElement.config.touched}
+              formType = 'Note'
             />
           ))}
         </div>
-        <Button
-          design='Note_Button'>Submit</Button>
       </form>
     )
     return (

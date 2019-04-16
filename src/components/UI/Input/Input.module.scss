@@ -26,6 +26,18 @@
       border: 4px solid #B33C69;
     }
   }
+  .Input_Invalid {
+    background: rgb(247, 134, 122);
+    border: 2px solid red;
+  }
+  .Textarea_Element {
+    resize: none;
+    width: 100%;
+    min-height: 20vh;
+    font-size: 1.5rem;
+    font-family: inherit;
+    font-weight: bold;
+  }
   .Select_Element {
     height: 3rem;
     font-size: 1.5rem;
@@ -46,4 +58,9 @@
 .Note_Form {
   width: 50%;
   margin: 0 1rem;
+}
+
+.SideBar_Form {
+  width: 100%;
+  margin: 0;
 }

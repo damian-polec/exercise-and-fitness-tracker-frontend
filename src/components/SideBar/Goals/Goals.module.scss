@@ -3,6 +3,8 @@
   .GoalsList {
     margin: 0;
     padding-left: 1.5rem;
+    overflow-wrap: break-word;
+    min-height: 200px;
     li {
       font-size: 1.5rem;
       font-weight: bold;

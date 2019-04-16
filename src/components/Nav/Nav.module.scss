@@ -1,0 +1,26 @@
+.Nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.582);
+  height: 50px;
+  .Nav_Link {
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 2rem;
+    margin: 0 1rem;
+    color: #fff;
+    text-shadow: 2px 2px 2px #000;
+    &:hover{
+      cursor: pointer;
+      color: #000;
+    }
+  }
+  .active {
+    color: #000;
+  }
+}

@@ -42,6 +42,10 @@ export const checkValidity = (value, rules, password = 0) => {
       const pattern = /^\d+$/;
       isValid = pattern.test(value) && isValid
   }
+  if (rules.isTime) {
+      const pattern = /^[0-9]{1,}(:[0-9]{2})$|^[0-9]{1,}$/g;
+      isValid = pattern.test(value) && isValid;
+  }
 
   return isValid;
 }

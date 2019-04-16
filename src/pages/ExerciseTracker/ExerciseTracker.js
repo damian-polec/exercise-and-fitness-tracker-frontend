@@ -6,6 +6,8 @@ import Backdrop from '../../components/Backdrop/Backdrop';
 import Modal from '../../components/Modal/Modal';
 import NoteView from '../../components/Note/NoteView/NoteView';
 import NoteEdit from '../../components/Note/NoteEdit/NoteEdit';
+import GoalsView from '../../components/SideBar/Goals/GoalsView/GoalsView';
+import GoalsEdit from '../../components/SideBar/Goals/GoalsEdit/GoalsEdit';
 import CalendarSquare from '../../components/Tracker/CalendarSquare/CalendarSquare';
 import ErrorHandler from '../../components/ErrorHandler/ErrorHandler';
 
@@ -19,6 +21,8 @@ class ExerciseTracker extends Component {
     showBackdrop: false,
     note: null,
     editNote: false,
+    goals: [],
+    editGoals: false,
     calendarData: null,
     isLoading: false,
     noteData: [],
@@ -82,15 +86,6 @@ class ExerciseTracker extends Component {
     });
   }
 
-  backdropClickHandler = () => {
-    this.setState({
-      note: null, 
-      editNote: false,
-      showBackdrop: false,
-      noteData: []
-     })
-  };
-  
   addExercisekHandler = (event, exerciseType, time) => {
     event.preventDefault();
     let passedTime = time;
@@ -123,6 +118,7 @@ class ExerciseTracker extends Component {
 
   onSaveNoteHandler = (event) => {
     event.preventDefault();
+    console.log('dziala');
     const token = localStorage.getItem('token');
     const bodyData = {
       noteData: this.state.noteData,
@@ -154,6 +150,39 @@ class ExerciseTracker extends Component {
     })
   }
 
+  onGoalsHandler = () => {
+    this.setState({
+      editGoals: true,
+      showBackdrop: true
+    })
+  }
+  
+  onAddGoalHandler = (event, goal) => {
+    event.preventDefault();
+    
+    const goals = []
+    goals.push(goal);
+    console.log(goals);
+    this.setState(prevState => {
+      return {goals: prevState.goals.concat(goals)}
+    })
+  }
+
+  onSaveGoalHandler = () => {
+    console.log('blabla');
+  }
+
+
+  backdropClickHandler = () => {
+    this.setState({
+      note: null, 
+      editNote: false,
+      editGoals: false,
+      showBackdrop: false,
+      noteData: []
+     })
+  };
+
   errorHandler = () => {
     if(this.state.error.message === 'Not Authenticated') {
       this.setState({error: null});
@@ -180,7 +209,7 @@ class ExerciseTracker extends Component {
                   time={day.time} />
       })
       if(lastDayOfPassedMonth < 6) {
-        let i = 0;
+        let i = 0;                        
         let calendarDay = new Date(year, month, 0).getDate();
         while(i <= lastDayOfPassedMonth) {
           days.unshift(<CalendarSquare key={i} day={calendarDay} />)
@@ -199,17 +228,32 @@ class ExerciseTracker extends Component {
           onHandle={this.errorHandler} />
         {this.state.editNote && (
           <Modal
-            title={`${this.state.note.day}/${this.state.note.month + 1}/${this.state.note.year}`}>
+            title={`${this.state.note.day}/${this.state.note.month + 1}/${this.state.note.year}`}
+            onAcceptModal={this.onSaveNoteHandler} 
+            onCancelModal={this.backdropClickHandler}>                                     
             <NoteView
               exercises={this.state.noteData} 
             />
             <NoteEdit 
               onClick={this.addExercisekHandler}
-              onSubmit={this.onSaveNoteHandler}/>
+              />
+          </Modal>
+        )}
+        {this.state.editGoals && (
+          <Modal
+            title='My Goals'
+            onAcceptModal={this.onSaveGoalHandler}
+            onCancelModal={this.backdropClickHandler}>
+            <GoalsView 
+              goals={this.state.goals}/>
+            <GoalsEdit 
+              onClick={this.onAddGoalHandler}/>
+
           </Modal>
         )}
         <div className={styles.ExerciseTracker}>
-          <SideBar />
+          <SideBar 
+            onGoalsHandler={this.onGoalsHandler} />
           <Tracker
             isLoading={this.state.isLoading}>
             {days}

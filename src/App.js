@@ -6,6 +6,7 @@ import SignUp from './pages/Auth/SignUp/SignUp';
 import SignIn from './pages/Auth/SignIn/SignIn';
 import ErrorHandler from './components/ErrorHandler/ErrorHandler';
 import ExerciseTracker from './pages/ExerciseTracker/ExerciseTracker';
+import Nav from './components/Nav/Nav';
 import './App.scss';
 
 class App extends Component {
@@ -110,7 +111,7 @@ class App extends Component {
       <Auth>
         <Switch>
           <Route
-            path='/'
+            path='/signup'
             exact
             render={props => (
               <SignUp 
@@ -131,7 +132,7 @@ class App extends Component {
               /> 
             )} 
           />
-          <Redirect to='/' />
+          <Redirect to='/login' />
         </Switch>
       </Auth>
     );
@@ -157,6 +158,9 @@ class App extends Component {
 
     return (
       <div className="App">
+        <Nav 
+          isAuth={this.state.isAuth}
+          onLogout={this.onLogoutHandler}/>
         <ErrorHandler
           error={this.state.error}
           onHandle={this.errorHandler} />
