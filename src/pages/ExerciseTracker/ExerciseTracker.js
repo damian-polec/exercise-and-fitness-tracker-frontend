@@ -8,11 +8,15 @@ import NoteView from '../../components/Note/NoteView/NoteView';
 import NoteEdit from '../../components/Note/NoteEdit/NoteEdit';
 import GoalsView from '../../components/SideBar/Goals/GoalsView/GoalsView';
 import GoalsEdit from '../../components/SideBar/Goals/GoalsEdit/GoalsEdit';
+import MotivationEdit from '../../components/SideBar/Motivation/MotivationEdit/MotivationEdit'
+import MotivationView from '../../components/SideBar/Motivation/MotivationView/MotivationView'
+import RewardView from '../../components/SideBar/Reward/RewardView/RewardView';
+import RewardEdit from '../../components/SideBar/Reward/RewardEdit/RewardEdit';
 import CalendarSquare from '../../components/Tracker/CalendarSquare/CalendarSquare';
 import ErrorHandler from '../../components/ErrorHandler/ErrorHandler';
 
 
-import { convertToSeconds, convertTime } from '../../shared/util'
+import { convertToSeconds, convertTime, generateBase64FromImage } from '../../shared/util'
 
 import styles from './ExerciseTracker.module.scss';
 
@@ -23,6 +27,11 @@ class ExerciseTracker extends Component {
     editNote: false,
     goals: [],
     editGoals: false,
+    motivation: 'Motivational Quote Of The Month',
+    motivationEdit: false,
+    reward: null,
+    rewardPreview: null,
+    rewardEdit: false,
     calendarData: null,
     isLoading: false,
     noteData: [],
@@ -172,12 +181,51 @@ class ExerciseTracker extends Component {
     console.log('blabla');
   }
 
+  onMotivationHandler = () => {
+    this.setState({
+      motivationEdit: true,
+      showBackdrop: true
+    })
+  }
+
+  onAddMotivationHandler = (event, motivation) => {
+    event.preventDefault();
+    this.setState({
+      motivation: motivation
+    })
+  }
+
+  onRewardHandler = () => {
+    this.setState({
+      rewardEdit: true,
+      showBackdrop: true
+    })
+  }
+
+  onAddRewardHandler = (event, reward, file) => {
+    event.preventDefault();
+    if(file) {
+      generateBase64FromImage(file[0])
+        .then(b64 => {
+          this.setState({rewardPreview: b64})
+        })
+        .catch(error => {
+          this.setState({rewardPreview: null})
+        })
+    }
+    this.setState({
+      reward: reward
+    })
+  }
+
 
   backdropClickHandler = () => {
     this.setState({
       note: null, 
       editNote: false,
       editGoals: false,
+      motivationEdit: false,
+      rewardEdit: false,
       showBackdrop: false,
       noteData: []
      })
@@ -251,9 +299,37 @@ class ExerciseTracker extends Component {
 
           </Modal>
         )}
+        {this.state.motivationEdit && (
+          <Modal
+            title='My Motivational Quote'
+            // onAcceptModal={this.onSaveGoalHandler}
+            onCancelModal={this.backdropClickHandler}>
+            <MotivationView 
+              motivation={this.state.motivation}/>
+            <MotivationEdit
+              motivation={this.state.motivation} 
+              onClick={this.onAddMotivationHandler}
+              />
+          </Modal>
+        )}
+        {this.state.rewardEdit && (  
+          <Modal
+            title='My Reward'
+            // onAcceptModal={this.onSaveGoalHandler}
+            onCancelModal={this.backdropClickHandler}>
+            <RewardView 
+              reward={this.state.reward}
+              rewardPreview={this.state.rewardPreview}/>
+            <RewardEdit
+              reward={this.state.reward} 
+              onClick={this.onAddRewardHandler}/>
+          </Modal>
+        )}
         <div className={styles.ExerciseTracker}>
           <SideBar 
-            onGoalsHandler={this.onGoalsHandler} />
+            onGoalsHandler={this.onGoalsHandler}
+            onMotivationHandler={this.onMotivationHandler}
+            onRewardHandler={this.onRewardHandler} />
           <Tracker
             isLoading={this.state.isLoading}>
             {days}

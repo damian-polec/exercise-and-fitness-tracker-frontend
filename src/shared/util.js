@@ -5,6 +5,17 @@ export const updateObject = (oldObject, updatedProperties) => {
   };
 };
 
+export const generateBase64FromImage = imageFile => {
+    const reader = new FileReader();
+    const promise = new Promise((resolve, reject) => {
+      reader.onload = e => resolve(e.target.result);
+      reader.onerror = err => reject(err);
+    });
+  
+    reader.readAsDataURL(imageFile);
+    return promise;
+};
+
 export const convertTime = (num) => {
     const getSeconds = Math.round((num / 60) * 100 + Number.EPSILON) / 100 % 1;
     const seconds = Math.round(getSeconds * 100 + Number.EPSILON) / 100 * 60;

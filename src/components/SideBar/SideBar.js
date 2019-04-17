@@ -10,8 +10,8 @@ const SideBar = props => {
   return (
     <div className={styles.SideBar}>
       <Goals onGoalsHandler={props.onGoalsHandler}/>
-      <Motivation />
-      <Reward />
+      <Motivation onMotivationHandler={props.onMotivationHandler}/>
+      <Reward onRewardHandler={props.onRewardHandler}/>
     </div>
   )
 }

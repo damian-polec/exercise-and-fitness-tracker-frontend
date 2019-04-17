@@ -1,5 +1,6 @@
 .FormButton {
   color: #B33C69;
+  font-family: inherit;
   width: 80%;
   font-size: 2rem;
   background: #fff;
@@ -23,8 +24,11 @@
 }
 
 .Note_Button {
+  font-family: inherit;
   color: #B33C69;
-  width: 40%;
+  width: fit-content;
+  font-weight: bold;
+  padding: .5rem;
   font-size: 2rem;
   background: #fff;
   border: 2px solid #B33C69;
@@ -40,6 +44,7 @@
 
 .Add_Button {
   color: #1cd149;
+  font-family: inherit;
   width: 50px;
   height: 50px;
   font-size: 2rem;
@@ -95,6 +100,8 @@
 
 .Accept_Button {
   color: #1cd149;
+  font-weight: bold;
+  font-family: inherit;
   width: 25%;
   font-size: 2rem;
   background: #fff;
@@ -118,7 +125,9 @@
 }
 
 .Cancel_Button {
+  font-family: inherit;
   color: red;
+  font-weight: bold;
   width: 25%;
   font-size: 2rem;
   background: #fff;

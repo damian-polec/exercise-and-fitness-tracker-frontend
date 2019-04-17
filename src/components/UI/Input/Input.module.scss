@@ -7,6 +7,17 @@
     font-size: 2rem;
     color: #B33C69;
   }
+  .File_Picker_Label {
+    border: 2px solid;
+    width: fit-content;
+    border-radius: 10px;
+    padding: .5rem;
+    &:hover {
+      color: #fff;
+      background: #B33C69;
+      cursor: pointer; 
+    }
+  }
   .Validation_Error {
     color: red;
     margin: 0;
@@ -37,6 +48,7 @@
     font-size: 1.5rem;
     font-family: inherit;
     font-weight: bold;
+    border: 2px solid #B33C69;
   }
   .Select_Element {
     height: 3rem;
@@ -48,6 +60,14 @@
     &:active {
       border: 4px solid #B33C69;
     }
+  }
+  .File_Picker {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
   }
 }
 
@@ -62,5 +82,9 @@
 
 .SideBar_Form {
   width: 100%;
+  margin: 0;
+}
+
+.Reward_Form {
   margin: 0;
 }

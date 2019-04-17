@@ -60,6 +60,15 @@ const Input = props => {
         </select>
       );
       break;
+    case( 'filePicker' ):
+      inputElement = <input 
+        id={props.id}
+        className={styles.File_Picker}
+        {...props.elementConfig}
+        onChange={props.change}
+        value={props.value} 
+        />
+      break;
     default:
       inputElement = <input
         className={styles.InputElement}
@@ -70,8 +79,9 @@ const Input = props => {
   return (
     <div className={[styles.Input, styles[props.design]].join(' ')}>
       <label
-        className={styles.Label} 
-        htmlFor={props.elementConfig.name}>{props.label}</label>
+        className={props.elementType === 'filePicker' ? [styles.Label, styles.File_Picker_Label].join(' ') : styles.Label} 
+        htmlFor={props.elementConfig.name}
+        onClick={props.onClick}>{props.label}</label>
       {validationError}
       {inputElement}
     </div>
