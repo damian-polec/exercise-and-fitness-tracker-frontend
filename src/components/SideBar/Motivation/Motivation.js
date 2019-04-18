@@ -8,7 +8,7 @@ const Motivation = props => {
   return (
     <div className={styles.Motivation}>
       <Header>Motivation</Header>
-      <h3>Motivational Quote Of The Month</h3>
+      <h3>{props.motivation}</h3>
       <Button 
         design='SideBar_Button'
         onClick={props.onMotivationHandler}>Add Quote</Button>

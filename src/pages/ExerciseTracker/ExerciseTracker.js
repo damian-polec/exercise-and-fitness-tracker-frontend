@@ -20,6 +20,8 @@ import { convertToSeconds, convertTime, generateBase64FromImage } from '../../sh
 
 import styles from './ExerciseTracker.module.scss';
 
+const URI = 'http://localhost:8080/tracker/'
+
 class ExerciseTracker extends Component {
   state = {
     showBackdrop: false,
@@ -27,7 +29,7 @@ class ExerciseTracker extends Component {
     editNote: false,
     goals: [],
     editGoals: false,
-    motivation: 'Motivational Quote Of The Month',
+    motivation: '',
     motivationEdit: false,
     reward: null,
     rewardPreview: null,
@@ -42,7 +44,10 @@ class ExerciseTracker extends Component {
   }
 
   getCalendar = () => {
-    this.setState({isLoading: true})
+    this.setState({
+      isLoading: true,
+
+    })
     const token = localStorage.getItem('token');
     fetch('http://localhost:8080/tracker/getData', {
       method: 'GET',
@@ -59,6 +64,8 @@ class ExerciseTracker extends Component {
         )
       }
       this.setState({ calendarData: resData.data, isLoading: false})
+      this.onGetGoals();
+      this.onGetMotivation();
     }).catch(err => {
         this.setState({error: err})
     });
@@ -168,17 +175,63 @@ class ExerciseTracker extends Component {
   
   onAddGoalHandler = (event, goal) => {
     event.preventDefault();
-    
-    const goals = []
-    goals.push(goal);
-    console.log(goals);
-    this.setState(prevState => {
-      return {goals: prevState.goals.concat(goals)}
+    const token = localStorage.getItem('token');
+    const bodyData = {
+      month: this.state.calendarData[0].month,
+      goal: goal
+    }
+    fetch('http://localhost:8080/tracker/addGoal', {
+      method: 'POST',
+      headers: {
+        'Content-Type' : 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(bodyData)
     })
+    .then(res => {
+      return res.json()
+    })
+    .then(resData => {
+      if(resData.errors) {
+        throw new Error(
+          'Not Authenticated'
+        )
+      }
+      this.setState({goals: resData.data});
+      console.log(this.state.goals);
+    })
+    .catch(err => {
+      this.setState({error: err});
+    });
   }
 
-  onSaveGoalHandler = () => {
-    console.log('blabla');
+  onGetGoals = () => {
+    const token = localStorage.getItem('token');
+    const bodyData = {
+      month: this.state.calendarData[0].month
+    }
+    fetch('http://localhost:8080/tracker/getGoals', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Beares ${token}`
+      },
+      body: JSON.stringify(bodyData)
+    })
+    .then(res => {
+      return res.json()
+    })
+    .then(resData => {
+      if(resData.errors) {
+        throw new Error(
+          'Not Authenticated'
+        )
+      }
+      this.setState({goals: resData});
+    })
+    .catch(err => {
+      this.setState({error: err});
+    })
   }
 
   onMotivationHandler = () => {
@@ -190,8 +243,63 @@ class ExerciseTracker extends Component {
 
   onAddMotivationHandler = (event, motivation) => {
     event.preventDefault();
-    this.setState({
-      motivation: motivation
+    const token = localStorage.getItem('token');
+    const bodyData = {
+      month: this.state.calendarData[0].month,
+      quote: motivation
+    }
+    fetch(`${URI}addQuote`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(bodyData)
+    })
+    .then(res => {
+      return res.json();
+    })
+    .then(resData => {
+      if(resData.errors) {
+        throw new Error(
+          'Not Authenticated'
+        )
+      }
+      this.setState({motivation: resData.data.quote})
+    })
+    .catch(err => {
+      this.setState({error: err});
+    })
+  }
+
+  onGetMotivation = () => {
+    const token = localStorage.getItem('token');
+    const bodyData = {
+      month: this.state.calendarData[0].month
+    }
+    fetch(`${URI}getQuote`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(bodyData)
+    })
+    .then(res => {
+      return res.json()
+    })
+    .then(resData => {
+      if(resData.errors && resData.errors.statusCode === 500) {
+        throw new Error(
+          'Not Authenticated'
+        )
+      }
+      this.setState({
+        motivation: resData.quote
+      })
+    })
+    .catch(err => {
+      this.setState({error: err});
     })
   }
 
@@ -290,12 +398,13 @@ class ExerciseTracker extends Component {
         {this.state.editGoals && (
           <Modal
             title='My Goals'
-            onAcceptModal={this.onSaveGoalHandler}
+            onAcceptModal={this.backdropClickHandler}
             onCancelModal={this.backdropClickHandler}>
             <GoalsView 
               goals={this.state.goals}/>
             <GoalsEdit 
-              onClick={this.onAddGoalHandler}/>
+              onClick={this.onAddGoalHandler}
+              value={this.state.value}/>
 
           </Modal>
         )}
@@ -328,8 +437,11 @@ class ExerciseTracker extends Component {
         <div className={styles.ExerciseTracker}>
           <SideBar 
             onGoalsHandler={this.onGoalsHandler}
+            goals={this.state.goals}
             onMotivationHandler={this.onMotivationHandler}
-            onRewardHandler={this.onRewardHandler} />
+            motivation={this.state.motivation}
+            onRewardHandler={this.onRewardHandler}
+            isLoading={this.state.isLoading} />
           <Tracker
             isLoading={this.state.isLoading}>
             {days}

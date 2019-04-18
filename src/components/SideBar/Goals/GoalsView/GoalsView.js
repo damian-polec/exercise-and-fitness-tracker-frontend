@@ -4,9 +4,9 @@ import React from 'react';
 
 const GoalsView = props => {
   let goalsList = null;
-  if(props.goals) {
-    goalsList = props.goals.map((goal, i) => {
-      return <li key={i}>{goal}</li>
+  if(props.goals.length > 0) {
+    goalsList = props.goals.map((goal) => {
+      return <li key={goal._id}>{goal.goal}</li>
     })
   }
 

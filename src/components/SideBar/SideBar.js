@@ -9,8 +9,14 @@ import styles from './SideBar.module.scss';
 const SideBar = props => {
   return (
     <div className={styles.SideBar}>
-      <Goals onGoalsHandler={props.onGoalsHandler}/>
-      <Motivation onMotivationHandler={props.onMotivationHandler}/>
+      <Goals 
+        onGoalsHandler={props.onGoalsHandler}
+        isLoading={props.isLoading}
+        goals={props.goals}/>
+      <Motivation 
+        onMotivationHandler={props.onMotivationHandler}
+        isLoading={props.isLoading}
+        motivation={props.motivation}/>
       <Reward onRewardHandler={props.onRewardHandler}/>
     </div>
   )

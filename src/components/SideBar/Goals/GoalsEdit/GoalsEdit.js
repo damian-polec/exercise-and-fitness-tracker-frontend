@@ -20,9 +20,28 @@ class GoalsEdit extends Component {
         },
         valid: false,
         touched: false
-      }
+      },
+      value:''
+  }
+  
+  componentDidMount() {
+    const button = document.querySelector('#Add_Goal');
+    button.addEventListener('click', this.clearInput);
+  };
+
+  componentWillUnmount() {
+    const button = document.querySelector('#Add_Goal');
+    button.removeEventListener('click', this.clearInput);
   }
 
+  clearInput = () => {
+    const updateInput = updateObject(this.state.goal, {
+      value: ''
+    })
+    this.setState({
+      goal: updateInput
+    })
+  }
   inputChangeHandler = (event, inputId) => {
     const updatedInputElement = updateObject(this.state.goal, {
       value: event.target.value,
@@ -30,7 +49,9 @@ class GoalsEdit extends Component {
       touched: true
     })
     this.setState({
-      goal: updatedInputElement});
+      goal: updatedInputElement,
+      value: event.target.value
+    });
   }
 
   render() {
@@ -46,9 +67,10 @@ class GoalsEdit extends Component {
               elementConfig={this.state.goal.elementConfig}
               value={this.state.goal.value} 
             />
-            <Button 
+            <Button
+              id='Add_Goal' 
               design='Note_Button'
-              onClick={event => this.props.onClick(event, this.state.goal.value)}>Add Goal</Button>
+              onClick={event => this.props.onClick(event, this.state.value)}>Add Goal</Button>
         </div>
       </form>
     )

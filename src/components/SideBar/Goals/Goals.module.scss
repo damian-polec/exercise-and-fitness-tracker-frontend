@@ -1,5 +1,10 @@
 .Goals {
   border: 2px solid #000;
+  .Spinner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
   .GoalsList {
     margin: 0;
     padding-left: 1.5rem;
