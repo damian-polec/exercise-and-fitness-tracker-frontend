@@ -16,7 +16,7 @@ import CalendarSquare from '../../components/Tracker/CalendarSquare/CalendarSqua
 import ErrorHandler from '../../components/ErrorHandler/ErrorHandler';
 
 
-import { convertToSeconds, convertTime, generateBase64FromImage } from '../../shared/util'
+import { convertToSeconds, convertTime, generateBase64FromImage, updateObject } from '../../shared/util'
 
 import styles from './ExerciseTracker.module.scss';
 
@@ -35,6 +35,7 @@ class ExerciseTracker extends Component {
     rewardPreview: null,
     rewardEdit: false,
     calendarData: null,
+    calendarMonth: null,
     isLoading: false,
     noteData: [],
     error: null
@@ -44,17 +45,23 @@ class ExerciseTracker extends Component {
   }
 
   getCalendar = () => {
+    let month = this.state.calendarMonth;
+    if(!month) {
+      month = new Date().getMonth();
+      this.setState({calendarMonth: month})
+    }
     this.setState({
       isLoading: true,
 
     })
     const token = localStorage.getItem('token');
     fetch('http://localhost:8080/tracker/getData', {
-      method: 'GET',
+      method: 'POST',
       headers: {
         'Content-Type' : 'application/json',
         'Authorization' : `Bearer ${token}`
-      }
+      },
+      body: JSON.stringify({month: month})
     }).then(res => {
       return res.json()
     }).then(resData => {
@@ -66,6 +73,7 @@ class ExerciseTracker extends Component {
       this.setState({ calendarData: resData.data, isLoading: false})
       this.onGetGoals();
       this.onGetMotivation();
+      this.onGetReward();
     }).catch(err => {
         this.setState({error: err})
     });
@@ -84,7 +92,6 @@ class ExerciseTracker extends Component {
       return res.json();
     })
     .then(resData => {
-      console.log(resData);
       if(resData.errors) {
         throw new Error (
           'Not Authenticated'
@@ -134,7 +141,6 @@ class ExerciseTracker extends Component {
 
   onSaveNoteHandler = (event) => {
     event.preventDefault();
-    console.log('dziala');
     const token = localStorage.getItem('token');
     const bodyData = {
       noteData: this.state.noteData,
@@ -155,11 +161,17 @@ class ExerciseTracker extends Component {
           'Not Authenticated'
         )
       }
+      const calendarDataCopy = this.state.calendarData.slice(0);
+      const index = calendarDataCopy.findIndex(elem => {
+        return elem._id === res.data[0].dayId
+      });
+      calendarDataCopy[index].exercises = res.data;
       this.setState({
-        showBackdrop: false,
-        editNote: false,
-        note: null,
-        noteData: []
+          showBackdrop: false,
+          editNote: false,
+          note: null,
+          noteData: [],
+          calendarData: test
       })
     }).catch(err => {
       this.setState({error: err});
@@ -198,7 +210,6 @@ class ExerciseTracker extends Component {
         )
       }
       this.setState({goals: resData.data});
-      console.log(this.state.goals);
     })
     .catch(err => {
       this.setState({error: err});
@@ -312,8 +323,12 @@ class ExerciseTracker extends Component {
 
   onAddRewardHandler = (event, reward, file) => {
     event.preventDefault();
+    const token = localStorage.getItem('token');
+    const imageData = new FormData();
+    imageData.append('image', file);
+    imageData.append('month', this.state.calendarData[0].month);
     if(file) {
-      generateBase64FromImage(file[0])
+      generateBase64FromImage(file)
         .then(b64 => {
           this.setState({rewardPreview: b64})
         })
@@ -324,6 +339,115 @@ class ExerciseTracker extends Component {
     this.setState({
       reward: reward
     })
+    fetch(`${URI}addReward`, {
+      method: 'POST',
+      headers: {
+        'Authorization' : `Bearer ${token}`
+      },
+      body: imageData
+    })
+    .then(res => {
+      return res.json()
+    })
+    .then(resData => {
+      this.setState({reward: resData.rewardData})
+    })
+    .catch(err => this.setState({error: err}));
+  }
+
+  onGetReward = () => {
+    const token = localStorage.getItem('token');
+    const bodyData = {
+      month: this.state.calendarData[0].month
+    }
+    fetch('http://localhost:8080/tracker/getReward', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Beares ${token}`
+      },
+      body: JSON.stringify(bodyData)
+    })
+    .then(res => {
+      return res.json()
+    })
+    .then(resData => {
+      if(resData.errors) {
+        throw new Error(
+          'Not Authenticated'
+        )
+      }
+      this.setState({reward: resData});
+    })
+    .catch(err => {
+      this.setState({error: err});
+    })
+  }
+
+//CalendarNav handlers
+
+  onNextMonthHandler = () => {
+    const month = this.state.calendarMonth + 1;
+
+    this.setState({
+      isLoading: true,
+      calendarMonth: month
+    })
+    const token = localStorage.getItem('token');
+    fetch('http://localhost:8080/tracker/getData', {
+      method: 'POST',
+      headers: {
+        'Content-Type' : 'application/json',
+        'Authorization' : `Bearer ${token}`
+      },
+      body: JSON.stringify({month: month})
+    }).then(res => {
+      return res.json()
+    }).then(resData => {
+      if(resData.errors) {
+        throw new Error(
+          'Not Authenticated'
+        )
+      }
+      this.setState({ calendarData: resData.data, isLoading: false})
+      this.onGetGoals();
+      this.onGetMotivation();
+      this.onGetReward();
+    }).catch(err => {
+        this.setState({error: err})
+    });
+  }
+
+  onPrevMonthHandler = () => {
+    const month = this.state.calendarMonth - 1;
+
+    this.setState({
+      isLoading: true,
+      calendarMonth: month
+    })
+    const token = localStorage.getItem('token');
+    fetch('http://localhost:8080/tracker/getData', {
+      method: 'POST',
+      headers: {
+        'Content-Type' : 'application/json',
+        'Authorization' : `Bearer ${token}`
+      },
+      body: JSON.stringify({month: month})
+    }).then(res => {
+      return res.json()
+    }).then(resData => {
+      if(resData.errors) {
+        throw new Error(
+          'Not Authenticated'
+        )
+      }
+      this.setState({ calendarData: resData.data, isLoading: false})
+      this.onGetGoals();
+      this.onGetMotivation();
+      this.onGetReward();
+    }).catch(err => {
+        this.setState({error: err})
+    });
   }
 
 
@@ -362,13 +486,16 @@ class ExerciseTracker extends Component {
                   click={this.onNoteHandler.bind(this, day)}
                   key={day._id}
                   day={day.day}
-                  time={day.time} />
+                  month={day.month}
+                  year={day.year}
+                  exercise={day.exercises}
+                />
       })
       if(lastDayOfPassedMonth < 6) {
         let i = 0;                        
         let calendarDay = new Date(year, month, 0).getDate();
         while(i <= lastDayOfPassedMonth) {
-          days.unshift(<CalendarSquare key={i} day={calendarDay} />)
+          days.unshift(<CalendarSquare key={i} day={calendarDay} exercise='' />)
           calendarDay--;
           i++;
         }
@@ -441,8 +568,12 @@ class ExerciseTracker extends Component {
             onMotivationHandler={this.onMotivationHandler}
             motivation={this.state.motivation}
             onRewardHandler={this.onRewardHandler}
+            reward={this.state.reward}
             isLoading={this.state.isLoading} />
           <Tracker
+            month={this.state.calendarMonth}
+            nextMonthHandler = {this.onNextMonthHandler}
+            prevMonthHandler={this.onPrevMonthHandler}
             isLoading={this.state.isLoading}>
             {days}
           </Tracker>

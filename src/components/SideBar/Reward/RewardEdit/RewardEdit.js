@@ -26,12 +26,11 @@ const rewardEdit = props => {
   const inputChangeHandler = (event) => {
     const updatedInputElement = updateObject(reward, {
       value: event.target.value,
-      files: event.target.files,
+      files: event.target.files[0],
       label: event.target.files[0].name
       // valid: checkValidity(event.target.value, this.state.goal.validation),
       // touched: true
     })
-    console.log(updatedInputElement);
     setReward(updatedInputElement);
   }
   const getFile = () => {
@@ -39,6 +38,7 @@ const rewardEdit = props => {
   }
     let form = (
       <form
+        encType='multipart/form-data'
         onSubmit={(event) => props.onSubmit(event)} 
         className={styles.Reward_Edit}
         >

@@ -30,7 +30,11 @@ class NoteEdit extends Component {
         elementConfig: {
           options: [
             {value: 'running', displayValue: 'Running'},
-            {value: 'swimming', displayValue: 'Swimming'}
+            {value: 'swimming', displayValue: 'Swimming'},
+            {value: 'walking', displayValue: 'Walking'},
+            {value: 'yoga', displayValue: 'Yoga'},
+            {value: 'gym', displayValue: 'Gym'},
+            {value: 'sport', displayValue: 'Sport'}
           ]
         },
         label: 'Exercise Type',

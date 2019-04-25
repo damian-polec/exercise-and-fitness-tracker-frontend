@@ -11,7 +11,7 @@ const Motivation = props => {
       <h3>{props.motivation}</h3>
       <Button 
         design='SideBar_Button'
-        onClick={props.onMotivationHandler}>Add Quote</Button>
+        onClick={props.onMotivationHandler}>{!props.motivation ? 'Add Quote' : 'Edit Quote'}</Button>
     </div>
   )
 }

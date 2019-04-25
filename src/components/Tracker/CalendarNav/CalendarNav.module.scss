@@ -1,0 +1,10 @@
+.Calendar_Nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .Month_Name {
+    font-size: 2rem;
+    margin: 0 1rem;
+    text-transform: uppercase;
+  }
+}

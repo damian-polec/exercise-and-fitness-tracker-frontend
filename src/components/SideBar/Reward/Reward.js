@@ -9,9 +9,10 @@ const Reward = props => {
     <div className={styles.Reward}>
       <Header>Reward</Header>
       <h3>(Reward At End Of The Month)</h3>
+      {props.reward && (<img src={props.reward.fileUrl} alt={props.reward.fileName} />)}
       <Button 
         design='SideBar_Button'
-        onClick={props.onRewardHandler}>Add Reward</Button>
+        onClick={props.onRewardHandler}>{!props.reward ? 'Add Reward' : 'Edit Reward'}</Button>
     </div>
   )
 }

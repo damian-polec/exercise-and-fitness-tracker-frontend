@@ -17,7 +17,9 @@ const SideBar = props => {
         onMotivationHandler={props.onMotivationHandler}
         isLoading={props.isLoading}
         motivation={props.motivation}/>
-      <Reward onRewardHandler={props.onRewardHandler}/>
+      <Reward 
+        onRewardHandler={props.onRewardHandler}
+        reward={props.reward}/>
     </div>
   )
 }

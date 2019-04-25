@@ -17,3 +17,18 @@
   }
 }
 
+.CalendarTest {
+  background: red;
+}
+
+.CalendarTest2 {
+  background: #1cd149;
+}
+
+.PastMonthDay {
+  background: gray;
+  &:hover {
+    background: gray;
+  }
+}
+
