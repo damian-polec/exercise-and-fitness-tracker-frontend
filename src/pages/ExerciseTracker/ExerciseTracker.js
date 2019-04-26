@@ -19,8 +19,8 @@ import ErrorHandler from '../../components/ErrorHandler/ErrorHandler';
 import { convertToSeconds, convertTime, generateBase64FromImage } from '../../shared/util'
 
 import styles from './ExerciseTracker.module.scss';
+const URI ='https://exercise-and-fitness-tracker.herokuapp.com/tracker/';
 
-const URI = 'http://localhost:8080/tracker/'
 
 class ExerciseTracker extends Component {
   state = {
@@ -55,7 +55,7 @@ class ExerciseTracker extends Component {
 
     })
     const token = localStorage.getItem('token');
-    fetch('http://localhost:8080/tracker/getData', {
+    fetch(`${URI}getData`, {
       method: 'POST',
       headers: {
         'Content-Type' : 'application/json',
@@ -82,7 +82,7 @@ class ExerciseTracker extends Component {
   onNoteHandler = noteData => {
     const token = localStorage.getItem('token')
     const noteId = noteData._id;
-    fetch(`http://localhost:8080/tracker/getNoteData/${noteId}`, {
+    fetch(`${URI}getNoteData/${noteId}`, {
       method: 'GET',
       headers: {
         'Authorization' : `Bearer ${token}`
@@ -146,7 +146,7 @@ class ExerciseTracker extends Component {
       noteData: this.state.noteData,
       dayId: this.state.note._id
     }
-    fetch('http://localhost:8080/tracker/addNote', {
+    fetch(`${URI}addNote`, {
       method: 'POST',
       headers: {
         'Content-Type' : 'application/json',
@@ -192,7 +192,7 @@ class ExerciseTracker extends Component {
       month: this.state.calendarData[0].month,
       goal: goal
     }
-    fetch('http://localhost:8080/tracker/addGoal', {
+    fetch(`${URI}addGoal`, {
       method: 'POST',
       headers: {
         'Content-Type' : 'application/json',
@@ -221,7 +221,7 @@ class ExerciseTracker extends Component {
     const bodyData = {
       month: this.state.calendarData[0].month
     }
-    fetch('http://localhost:8080/tracker/getGoals', {
+    fetch(`${URI}getGoals`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -360,7 +360,7 @@ class ExerciseTracker extends Component {
     const bodyData = {
       month: this.state.calendarData[0].month
     }
-    fetch('http://localhost:8080/tracker/getReward', {
+    fetch(`${URI}getReward`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -394,7 +394,7 @@ class ExerciseTracker extends Component {
       calendarMonth: month
     })
     const token = localStorage.getItem('token');
-    fetch('http://localhost:8080/tracker/getData', {
+    fetch(`${URI}getData`, {
       method: 'POST',
       headers: {
         'Content-Type' : 'application/json',
@@ -426,7 +426,7 @@ class ExerciseTracker extends Component {
       calendarMonth: month
     })
     const token = localStorage.getItem('token');
-    fetch('http://localhost:8080/tracker/getData', {
+    fetch(`${URI}getData`, {
       method: 'POST',
       headers: {
         'Content-Type' : 'application/json',

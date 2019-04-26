@@ -9,6 +9,8 @@ import ExerciseTracker from './pages/ExerciseTracker/ExerciseTracker';
 import Nav from './components/Nav/Nav';
 import './App.scss';
 
+const URI ='https://exercise-and-fitness-tracker.herokuapp.com/';
+
 class App extends Component {
   state = {
     error: null,
@@ -30,7 +32,7 @@ class App extends Component {
   onSignUpHandler = (event, formData) => {
     event.preventDefault();
     this.setState({ authLoading: true })
-    fetch('http://localhost:8080/auth/signup', {
+    fetch(`${URI}auth/signup`, {
       method: 'POST',
       headers: {
         'Content-Type' : 'application/json'
@@ -59,7 +61,7 @@ class App extends Component {
   onLoginHandler = (event, formData) => {
     event.preventDefault();
     this.setState({ authLoading: true })
-    fetch('http://localhost:8080/auth/signin', {
+    fetch(`${URI}auth/signin`, {
       method: 'POST',
       headers: {
         'Content-Type' : 'application/json'
