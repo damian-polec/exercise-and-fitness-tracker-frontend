@@ -2,7 +2,7 @@ import React, { useState, Fragment } from 'react';
 
 import Input from '../../../UI/Input/Input';
 import Button from '../../../UI/Button/Button';
-import { updateObject, checkValidity } from '../../../../shared/util';
+import { updateObject } from '../../../../shared/util';
 
 import styles from './RewardEdit.module.scss';
 

@@ -4,3 +4,9 @@
   flex-direction: column;
   justify-content: space-evenly;
 }
+
+@media(max-width: 1023px) {
+  .SideBar {
+    width: 100%;
+  }
+}

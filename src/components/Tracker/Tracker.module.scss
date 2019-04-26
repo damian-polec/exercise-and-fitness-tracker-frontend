@@ -42,3 +42,21 @@
     }
   }
 }
+
+@media(max-width: 1023px) {
+  .Tracker {
+    width: 100%;
+    .CalendarWrapper {
+      justify-content: center;
+    }
+  }
+}
+
+@media(max-width: 767px) {
+  .Tracker {
+    width: 100%;
+    h1 {
+      font-size: 1.8rem;
+    }
+  }
+}

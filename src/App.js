@@ -68,7 +68,6 @@ class App extends Component {
     }).then(res => {
       return res.json()
     }).then(json => {
-      console.log(json);
       if(json.errors && json.errors.statusCode === 422) {
         throw new Error(
           'Validation Failed. User doesn\'t exist'

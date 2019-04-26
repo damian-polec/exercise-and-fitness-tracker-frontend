@@ -9,7 +9,8 @@ const rewardView = props => {
       {props.rewardPreview && (
         <img
           className={styles.Image_Preview} 
-          src={props.rewardPreview}/>
+          src={props.rewardPreview}
+          alt=''/>
       )}
     </div>
   )

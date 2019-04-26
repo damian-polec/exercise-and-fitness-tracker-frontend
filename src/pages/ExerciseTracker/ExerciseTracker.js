@@ -16,7 +16,7 @@ import CalendarSquare from '../../components/Tracker/CalendarSquare/CalendarSqua
 import ErrorHandler from '../../components/ErrorHandler/ErrorHandler';
 
 
-import { convertToSeconds, convertTime, generateBase64FromImage, updateObject } from '../../shared/util'
+import { convertToSeconds, convertTime, generateBase64FromImage } from '../../shared/util'
 
 import styles from './ExerciseTracker.module.scss';
 
@@ -538,7 +538,7 @@ class ExerciseTracker extends Component {
         {this.state.motivationEdit && (
           <Modal
             title='My Motivational Quote'
-            // onAcceptModal={this.onSaveGoalHandler}
+            onAcceptModal={this.backdropClickHandler}
             onCancelModal={this.backdropClickHandler}>
             <MotivationView 
               motivation={this.state.motivation}/>
@@ -551,7 +551,7 @@ class ExerciseTracker extends Component {
         {this.state.rewardEdit && (  
           <Modal
             title='My Reward'
-            // onAcceptModal={this.onSaveGoalHandler}
+            onAcceptModal={this.backdropClickHandler}
             onCancelModal={this.backdropClickHandler}>
             <RewardView 
               reward={this.state.reward}

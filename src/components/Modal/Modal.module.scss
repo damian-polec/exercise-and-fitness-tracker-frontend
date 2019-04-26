@@ -35,3 +35,14 @@
 
 }
 
+@media(max-width: 767px) {
+  .Modal{
+    top: 10vh;
+    width: 100%;
+    left: 0;
+    .Modal_Header h1 {
+      font-size: 1.5rem;
+    }
+  }
+}
+

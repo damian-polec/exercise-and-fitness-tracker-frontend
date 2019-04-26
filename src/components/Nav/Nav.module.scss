@@ -24,3 +24,10 @@
     color: #000;
   }
 }
+
+@media(max-width: 1023px) {
+  .Nav {
+    background: #D28BA4;
+    position: absolute;
+  }
+}

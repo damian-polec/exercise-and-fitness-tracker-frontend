@@ -12,3 +12,9 @@
   font-weight: bold;
   font-size: 1.5rem;
 }
+
+@media(max-width: 767px) {
+  .CalendarHeader {
+    font-size: 1rem;
+  }
+}

@@ -1,6 +1,6 @@
 import React from 'react';
 
-//import styles from './NoteView.module.scss';
+import styles from './GoalsView.module.scss';
 
 const GoalsView = props => {
   let goalsList = null;
@@ -11,8 +11,8 @@ const GoalsView = props => {
   }
 
   return (
-    <div className='test'>
-      <ol>
+    <div className={styles.Goals_View}>
+      <ol className={styles.Goals_List}>
         {goalsList}
       </ol>
     </div>

@@ -6,3 +6,16 @@
   align-items: center;
   justify-content: center;
 }
+
+@media(max-width: 1023px) {
+  .App {
+    height: auto;
+  }
+}
+
+@media(max-width: 767px) {
+  .App {
+    width: 100%;
+    display: block;
+  }
+}
