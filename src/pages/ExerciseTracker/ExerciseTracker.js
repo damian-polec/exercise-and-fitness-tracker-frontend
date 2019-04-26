@@ -409,7 +409,7 @@ class ExerciseTracker extends Component {
           'Not Authenticated'
         )
       }
-      this.setState({ calendarData: resData.data, isLoading: false})
+      this.setState({ calendarData: resData.data, isLoading: false, rewardPreview: null})
       this.onGetGoals();
       this.onGetMotivation();
       this.onGetReward();
@@ -441,7 +441,7 @@ class ExerciseTracker extends Component {
           'Not Authenticated'
         )
       }
-      this.setState({ calendarData: resData.data, isLoading: false})
+      this.setState({ calendarData: resData.data, isLoading: false, rewardPreview: null})
       this.onGetGoals();
       this.onGetMotivation();
       this.onGetReward();
