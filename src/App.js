@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { Route, Switch, Redirect, withRouter } from 'react-router-dom';
 
 import Auth from './pages/Auth/Auth';
-import SignUp from './pages/Auth/SignUp/SignUp';
 import SignIn from './pages/Auth/SignIn/SignIn';
+import SignUp from './pages/Auth/SignUp/SignUp';
 import ErrorHandler from './components/ErrorHandler/ErrorHandler';
 import ExerciseTracker from './pages/ExerciseTracker/ExerciseTracker';
 import Nav from './components/Nav/Nav';
